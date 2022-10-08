@@ -17,7 +17,7 @@ public:
     CClock(double frequency);
 
     void Begin();
-    void End(bool limit);
+    void End();
     double TimeElapsed() const { return m_TimeElapsed; }
 };
 

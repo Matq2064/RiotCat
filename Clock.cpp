@@ -11,10 +11,8 @@ void CClock::Begin()
     m_Begin = chrono::steady_clock::now();
 }
 
-void CClock::End(bool limit)
+void CClock::End()
 {
-    do {
-        m_End = chrono::steady_clock::now();
-        m_TimeElapsed = (double)(chrono::duration_cast<chrono::nanoseconds>(m_End - m_Begin).count()) * 1e-9;
-    } while (limit && m_TimeElapsed < m_PeriodDelay);
+    m_End = chrono::steady_clock::now();
+    m_TimeElapsed = (double)(chrono::duration_cast<chrono::nanoseconds>(m_End - m_Begin).count()) * 1e-9;
 }
