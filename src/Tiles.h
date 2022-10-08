@@ -6,7 +6,7 @@
 #include "Drawing.h"
 
 class CTiles : public CHandleInput {
-private:
+protected:
     int m_TileSize = 32;
     int m_width, m_height;
     int m_aTiles[1048576]; // 4 Megabytes nexup do dynamic sizes wooooo :D :D
@@ -27,7 +27,7 @@ public:
     int Height() const { return m_height; }
     int Area() const { return Width() * Height(); }
     void Draw(CDrawing* pDrawing);
-    void Input(SDL_Event& Event);
+    void Input(SDL_Event& Event) override;
     bool SaveMap(const char* filepath);
     bool LoadMap(const char* filepath);
 };
