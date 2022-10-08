@@ -10,7 +10,7 @@ CWindow* pWindow;
 CTiles* pTiles;
 
 int main() {
-    pWindow = new CWindow("RiotCat", WIDTH, HEIGHT);
+    pWindow = new CWindow("RiotCat Editor", WIDTH, HEIGHT);
     if (!pWindow->Initialized())
         return -1;
 
