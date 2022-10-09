@@ -10,7 +10,7 @@ public:
     CETileMap(CWindow* pWindow, int width, int height);
     ~CETileMap();
 
-
+    // void Input(); becuz CHandleInput lawlz
 };
 
 #endif //RIOTCAT_ETILEMAP_H
