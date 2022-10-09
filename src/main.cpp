@@ -1,10 +1,12 @@
 #define SDL_MAIN_HANDLED
 
 #include "RiotCat/Window.h"
+#include "RiotCat/Tile.h"
 #include "RiotCat/Character.h"
 using namespace std;
 
 CWindow* pWindow;
+CTileMap* pTilemap;
 CCharacter* pCharacter;
 
 int main() {
@@ -16,8 +18,8 @@ int main() {
     CInput* pInput = pWindow->Input();
     CDrawing* pDrawing = pWindow->Drawing();
 
+    pTilemap = new CTileMap(pWindow, 20, 20);
     pCharacter = new CCharacter(pWindow, 300, 300);
-    pInput->AddObject(pCharacter);
 
     while (true) {
         pClock->Begin();
@@ -30,14 +32,17 @@ int main() {
 
         pDrawing->SetColor(0, 0, 0, 255);
         pDrawing->Clear();
-        pCharacter->Draw();
-        pDrawing->Present();
 
+        pTilemap->Draw();
+        pCharacter->Draw();
+
+        pDrawing->Present();
         do { pClock->End(); }
         while (pClock->TimeElapsed() < 1.0 / 75.0);
     }
 
     delete pCharacter;
+    delete pTilemap;
     delete pWindow;
     return 0;
 }

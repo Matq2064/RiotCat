@@ -19,6 +19,12 @@ CCharacter::CCharacter(CWindow* pWindow, double X, double Y) {
         m_aInput[i] = false;
         m_aLastInput[i] = false;
     }
+
+    m_pWindow->Input()->AddObject(this);
+}
+
+CCharacter::~CCharacter() {
+    m_pWindow->Input()->RemoveObject(this);
 }
 
 void CCharacter::Input(SDL_Event& Event) {

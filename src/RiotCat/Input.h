@@ -22,6 +22,7 @@ public:
 
     void Tick();
     void AddObject(CHandleInput* pObject);
+    void RemoveObject(CHandleInput* pObject);
     bool GetQuit() const { return m_Quit; }
 };
 

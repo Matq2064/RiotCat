@@ -1,4 +1,5 @@
 #include "Input.h"
+#include <algorithm>
 
 CInput::CInput() {
 
@@ -24,4 +25,8 @@ void CInput::Tick() {
 
 void CInput::AddObject(CHandleInput* pObject) {
     m_vpObjects.push_back(pObject);
+}
+
+void CInput::RemoveObject(CHandleInput *pObject) {
+    m_vpObjects.erase(remove(m_vpObjects.begin(), m_vpObjects.end(), pObject), m_vpObjects.end());
 }

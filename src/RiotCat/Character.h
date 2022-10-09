@@ -26,6 +26,7 @@ private:
 
 public:
     CCharacter(CWindow* pWindow, double X, double Y);
+    ~CCharacter();
 
     void Input(SDL_Event& Event) override;
     void Tick(double time_elapsed);
