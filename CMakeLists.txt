@@ -6,8 +6,8 @@ set(CMAKE_EXE_LINKER_FLAGS "-static")
 include_directories(C:/libs/SDL/include)
 link_directories(C:/libs/SDL/lib/x64)
 
-add_executable(RiotCat src/main.cpp src/Window.h src/Window.cpp src/Drawing.h src/Drawing.cpp src/Clock.h src/Clock.cpp src/Input.h src/Input.cpp src/Files.cpp src/Files.h src/Tiles.cpp src/Tiles.h src/Character.cpp src/Character.h src/Rect.h src/Rect.cpp)
-add_executable(Editor src/editor.cpp src/Window.h src/Window.cpp src/Drawing.h src/Drawing.cpp src/Clock.h src/Clock.cpp src/Input.h src/Input.cpp src/Files.cpp src/Files.h src/Tiles.cpp src/Tiles.h src/Character.cpp src/Character.h src/Rect.h src/Rect.cpp src/editor/ETiles.h src/editor/ETiles.cpp)
+add_executable(RiotCat src/main.cpp src/RiotCat/Window.h src/RiotCat/Window.cpp src/RiotCat/Drawing.h src/RiotCat/Drawing.cpp src/RiotCat/Clock.h src/RiotCat/Clock.cpp src/RiotCat/Input.h src/RiotCat/Input.cpp src/RiotCat/Files.cpp src/RiotCat/Files.h src/RiotCat/Character.cpp src/RiotCat/Character.h src/RiotCat/Rect.h src/RiotCat/Rect.cpp)
+add_executable(Editor src/editor.cpp src/RiotCat/Window.h src/RiotCat/Window.cpp src/RiotCat/Drawing.h src/RiotCat/Drawing.cpp src/RiotCat/Clock.h src/RiotCat/Clock.cpp src/RiotCat/Input.h src/RiotCat/Input.cpp src/RiotCat/Files.cpp src/RiotCat/Files.h src/RiotCat/Character.cpp src/RiotCat/Character.h src/RiotCat/Rect.h src/RiotCat/Rect.cpp)
 
 target_link_libraries(RiotCat SDL2main SDL2)
 target_link_libraries(Editor SDL2main SDL2)

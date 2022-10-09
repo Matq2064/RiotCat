@@ -25,6 +25,7 @@ public:
     CInput* Input() const { return m_pInput; }
     CDrawing* Drawing() const { return m_pDrawing; }
     bool Initialized() const { return m_Initialized; }
+    void GetSize(int* w, int* h) const { SDL_GetWindowSize(Window(), w, h); };
 };
 
 

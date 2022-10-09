@@ -1,21 +1,16 @@
 #define SDL_MAIN_HANDLED
 
-#include "Window.h"
-#include "editor/ETiles.h"
+#include "RiotCat/Window.h"
 using namespace std;
 
 int WIDTH = 900;
 int HEIGHT = 700;
 CWindow* pWindow;
-CETiles* pTiles;
 
 int main() {
     pWindow = new CWindow("RiotCat Editor", WIDTH, HEIGHT);
     if (!pWindow->Initialized())
         return -1;
-
-    pTiles = new CETiles(20, 20);
-    pWindow->Input()->AddObject(pTiles);
 
     CClock* pClock = pWindow->Clock();
     CInput* pInput = pWindow->Input();
@@ -28,18 +23,14 @@ int main() {
         if (pInput->GetQuit())
             break;
 
-        pTiles->Tick();
-
         pDrawing->SetColor(0, 0, 0, 255);
         pDrawing->Clear();
-        pTiles->Draw(pDrawing);
         pDrawing->Present();
 
         do { pClock->End(); }
         while (pClock->TimeElapsed() < 1.0 / 75.0);
     }
 
-    delete pTiles;
     delete pWindow;
     return 0;
 }

@@ -1,14 +1,12 @@
 #define SDL_MAIN_HANDLED
 
-#include "Window.h"
-#include "Tiles.h"
-#include "Character.h"
+#include "RiotCat/Window.h"
+#include "RiotCat/Character.h"
 using namespace std;
 
 int WIDTH = 900;
 int HEIGHT = 700;
 CWindow* pWindow;
-CTiles* pTiles;
 CCharacter* pCharacter;
 
 int main() {
@@ -16,10 +14,8 @@ int main() {
     if (!pWindow->Initialized())
         return -1;
 
-    pTiles = new CTiles(20, 20);
     pCharacter = new CCharacter(300, 300);
     pWindow->Input()->AddObject(pCharacter);
-    pWindow->Input()->AddObject(pTiles);
 
     CClock* pClock = pWindow->Clock();
     CInput* pInput = pWindow->Input();
@@ -36,7 +32,6 @@ int main() {
 
         pDrawing->SetColor(0, 0, 0, 255);
         pDrawing->Clear();
-        pTiles->Draw(pDrawing);
         pCharacter->Draw(pDrawing);
         pDrawing->Present();
 
@@ -45,7 +40,6 @@ int main() {
     }
 
     delete pCharacter;
-    delete pTiles;
     delete pWindow;
     return 0;
 }
