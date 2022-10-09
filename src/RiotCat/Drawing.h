@@ -14,6 +14,7 @@ public:
     void Clear();
     void Present();
     void SetColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+    void SetColor(SDL_Color color);
     void FillRect(SDL_Rect* pRect);
 };
 

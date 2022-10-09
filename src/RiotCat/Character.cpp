@@ -1,6 +1,7 @@
 #include "Character.h"
 
-CCharacter::CCharacter(double X, double Y) {
+CCharacter::CCharacter(CWindow* pWindow, double X, double Y) {
+    m_pWindow = pWindow;
     m_x = X;
     m_y = Y;
     m_w = 50;
@@ -81,7 +82,9 @@ void CCharacter::Tick(double time_elapsed) {
     memcpy(&m_aLastInput, &m_aInput, sizeof(m_aInput));
 }
 
-void CCharacter::Draw(CDrawing* pDrawing) {
+void CCharacter::Draw() {
+    CDrawing* pDrawing = m_pWindow->Drawing();
+
     SDL_Rect Rect = GetRect();
     pDrawing->SetColor(255, 255, 255, 255);
     pDrawing->FillRect(&Rect);

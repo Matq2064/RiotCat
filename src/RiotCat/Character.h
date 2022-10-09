@@ -2,14 +2,14 @@
 #define RIOTCATE_CHARACTER_H
 
 #include "Rect.h"
-#include "Input.h"
-#include "Drawing.h"
+#include "Window.h"
 #include <cmath>
 #include <map>
 using namespace std;
 
 class CCharacter : public CHandleInput, CHandleRect {
 private:
+    CWindow* m_pWindow;
     double m_xvel, m_yvel;
     bool m_Jump;
 
@@ -25,11 +25,11 @@ private:
     bool m_aInput[NUM_INP], m_aLastInput[NUM_INP];
 
 public:
-    CCharacter(double X, double Y);
+    CCharacter(CWindow* pWindow, double X, double Y);
 
     void Input(SDL_Event& Event) override;
     void Tick(double time_elapsed);
-    void Draw(CDrawing* pDrawing);
+    void Draw();
 };
 
 #endif //RIOTCATE_CHARACTER_H

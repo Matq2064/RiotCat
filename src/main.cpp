@@ -4,24 +4,22 @@
 #include "RiotCat/Character.h"
 using namespace std;
 
-int WIDTH = 900;
-int HEIGHT = 700;
 CWindow* pWindow;
 CCharacter* pCharacter;
 
 int main() {
-    pWindow = new CWindow("RiotCat", WIDTH, HEIGHT);
+    pWindow = new CWindow("RiotCat", 900, 700);
     if (!pWindow->Initialized())
         return -1;
-
-    pCharacter = new CCharacter(300, 300);
-    pWindow->Input()->AddObject(pCharacter);
 
     CClock* pClock = pWindow->Clock();
     CInput* pInput = pWindow->Input();
     CDrawing* pDrawing = pWindow->Drawing();
-    while (true)
-    {
+
+    pCharacter = new CCharacter(pWindow, 300, 300);
+    pInput->AddObject(pCharacter);
+
+    while (true) {
         pClock->Begin();
 
         pInput->Tick();
@@ -32,7 +30,7 @@ int main() {
 
         pDrawing->SetColor(0, 0, 0, 255);
         pDrawing->Clear();
-        pCharacter->Draw(pDrawing);
+        pCharacter->Draw();
         pDrawing->Present();
 
         do { pClock->End(); }

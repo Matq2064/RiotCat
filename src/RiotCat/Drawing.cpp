@@ -16,6 +16,10 @@ void CDrawing::SetColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
     SDL_SetRenderDrawColor(m_pRenderer, r, g, b, a);
 }
 
+void CDrawing::SetColor(SDL_Color color) {
+    SetColor(color.r, color.g, color.b, color.a);
+}
+
 void CDrawing::FillRect(SDL_Rect* pRect) {
     SDL_RenderFillRect(m_pRenderer, pRect);
 }
