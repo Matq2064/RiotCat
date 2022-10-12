@@ -17,7 +17,8 @@ private:
 public:
     CTile();
 
-    TileType Type() const { return m_Type; }
+    TileType GetType() const { return m_Type; }
+    void SetType(TileType type) { m_Type = type; }
 };
 
 class CTileMap {
@@ -32,6 +33,10 @@ public:
     ~CTileMap();
 
     virtual void Draw();
+    void Tick();
+
+    void SaveMap(const char* filepath);
+    void LoadMap(const char* filepath);
 };
 
 #endif //RIOTCAT_TILE_H

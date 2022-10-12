@@ -25,6 +25,8 @@ int main() {
         if (pInput->GetQuit())
             break;
 
+        pTilemap->Tick();
+
         pDrawing->SetColor(0, 0, 0, 255);
         pDrawing->Clear();
 

@@ -10,40 +10,24 @@ CCharacter::CCharacter(CWindow* pWindow, double X, double Y) {
     m_yvel = 0.0;
     m_Jump = false;
 
-    m_mInputMapping[SDL_SCANCODE_W] = UP;
-    m_mInputMapping[SDL_SCANCODE_D] = RIGHT;
-    m_mInputMapping[SDL_SCANCODE_S] = DOWN;
-    m_mInputMapping[SDL_SCANCODE_A] = LEFT;
-
-    for (int i = 0; i < NUM_INP; i++) {
-        m_aInput[i] = false;
-        m_aLastInput[i] = false;
-    }
-
-    m_pWindow->Input()->AddObject(this);
+    CInput* pInput = m_pWindow->Input();
+    pInput->AddKey(SDL_SCANCODE_W);
+    pInput->AddKey(SDL_SCANCODE_D);
+    pInput->AddKey(SDL_SCANCODE_S);
+    pInput->AddKey(SDL_SCANCODE_A);
 }
 
 CCharacter::~CCharacter() {
-    m_pWindow->Input()->RemoveObject(this);
-}
 
-void CCharacter::Input(SDL_Event& Event) {
-    if (Event.type != SDL_KEYDOWN && Event.type != SDL_KEYUP)
-        return;
-
-    int Scancode = Event.key.keysym.scancode;
-    if (m_mInputMapping.find(Scancode) == m_mInputMapping.end())
-        return;
-    int Index = m_mInputMapping[Scancode];
-    bool State = Event.type == SDL_KEYDOWN;
-    m_aInput[Index] = State;
 }
 
 void CCharacter::Tick(double time_elapsed) {
-    bool Jump = m_aInput[UP] && !m_aLastInput[UP];
-    bool Right = m_aInput[RIGHT];
-    bool Down = m_aInput[DOWN];
-    bool Left = m_aInput[LEFT];
+    CInput* pInput = m_pWindow->Input();
+
+    bool Jump = pInput->GetKeyTap(SDL_SCANCODE_W);
+    bool Right = pInput->GetKey(SDL_SCANCODE_D);
+    bool Down = pInput->GetKey(SDL_SCANCODE_S);
+    bool Left = pInput->GetKey(SDL_SCANCODE_A);
 
     double SomeAccel = 2500;
     double Accel = SomeAccel * time_elapsed;
@@ -84,8 +68,6 @@ void CCharacter::Tick(double time_elapsed) {
             m_Jump = true;
         }
     }
-
-    memcpy(&m_aLastInput, &m_aInput, sizeof(m_aInput));
 }
 
 void CCharacter::Draw() {

@@ -28,6 +28,7 @@ int main() {
         if (pInput->GetQuit())
             break;
 
+        pTilemap->Tick();
         pCharacter->Tick(pClock->TimeElapsed());
 
         pDrawing->SetColor(0, 0, 0, 255);

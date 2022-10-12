@@ -2,15 +2,14 @@
 #define RIOTCAT_ETILEMAP_H
 
 #include "../Tile.h"
+#include <map>
 
-class CETileMap : public CTileMap, CHandleInput {
-private:
-
+class CETileMap : public CTileMap {
 public:
     CETileMap(CWindow* pWindow, int width, int height);
     ~CETileMap();
 
-    // void Input(); becuz CHandleInput lawlz
+    void Tick();
 };
 
 #endif //RIOTCAT_ETILEMAP_H
