@@ -1,12 +1,12 @@
 #define SDL_MAIN_HANDLED
 
 #include "RiotCat/Window.h"
-#include "RiotCat/Tile.h"
+#include "RiotCat/Gameworld.h"
 #include "RiotCat/Character.h"
 using namespace std;
 
 CWindow* pWindow;
-CTileMap* pTilemap;
+CGameWorld* pGameworld;
 CCharacter* pCharacter;
 
 int main() {
@@ -18,8 +18,8 @@ int main() {
     CInput* pInput = pWindow->Input();
     CDrawing* pDrawing = pWindow->Drawing();
 
-    pTilemap = new CTileMap(pWindow, 20, 20);
-    pCharacter = new CCharacter(pWindow, 300, 300);
+    pGameworld = new CGameWorld(pWindow, 20, 20);
+    pCharacter = new CCharacter(pGameworld, 300, 300);
 
     while (true) {
         pClock->Begin();
@@ -28,13 +28,13 @@ int main() {
         if (pInput->GetQuit())
             break;
 
-        pTilemap->Tick();
-        pCharacter->Tick(pClock->TimeElapsed());
+        pGameworld->Tick();
+        pCharacter->Tick();
 
         pDrawing->SetColor(0, 0, 0, 255);
         pDrawing->Clear();
 
-        pTilemap->Draw();
+        pGameworld->Draw();
         pCharacter->Draw();
 
         pDrawing->Present();
@@ -43,7 +43,7 @@ int main() {
     }
 
     delete pCharacter;
-    delete pTilemap;
+    delete pGameworld;
     delete pWindow;
     return 0;
 }

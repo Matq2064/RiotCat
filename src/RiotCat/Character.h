@@ -2,22 +2,25 @@
 #define RIOTCATE_CHARACTER_H
 
 #include "Rect.h"
-#include "Window.h"
+#include "Gameworld.h"
 #include <cmath>
 #include <map>
 using namespace std;
 
 class CCharacter : public CHandleRect {
 private:
-    CWindow* m_pWindow;
+    CGameWorld* m_pGameworld;
     double m_xvel, m_yvel;
     bool m_Jump;
 
+    void Movement();
+    void WallCollision();
+
 public:
-    CCharacter(CWindow* pWindow, double X, double Y);
+    CCharacter(CGameWorld* pGameworld, double X, double Y);
     ~CCharacter();
 
-    void Tick(double time_elapsed);
+    void Tick();
     void Draw();
 };
 

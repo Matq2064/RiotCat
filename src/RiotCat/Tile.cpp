@@ -80,6 +80,21 @@ void CTileMap::LoadMap(const char* filepath) {
     for (int i = 0; i < m_Width * m_Height; i++)
         m_aTiles[i].SetType((TileType)Mapfile.GetInt());
     Mapfile.Close();
+}
 
-    printf("loaded map\n");
+CTile* CTileMap::GetTileWorld(vec2d point) {
+    int x = point.x / m_TileSize;
+    int y = point.y / m_TileSize;
+
+    return GetTile((int)x, (int)y);
+}
+
+
+CTile* CTileMap::GetTile(int tilex, int tiley) {
+    if (tilex < 0) tilex = 0;
+    if (tilex >= m_Width) tilex = m_Width - 1;
+    if (tiley < 0) tiley = 0;
+    if (tiley >= m_Height) tiley = m_Height - 1;
+
+    return &m_aTiles[tiley * m_Width + tilex];
 }

@@ -2,6 +2,7 @@
 #define RIOTCAT_TILE_H
 
 #include "Window.h"
+#include "vec2.h"
 
 enum TileType {
     TILE_EMPTY,
@@ -37,6 +38,9 @@ public:
 
     void SaveMap(const char* filepath);
     void LoadMap(const char* filepath);
+    CTile* GetTileWorld(vec2d point);
+    CTile* GetTile(int tilex, int tiley);
+    int TileSize() const { return m_TileSize; }
 };
 
 #endif //RIOTCAT_TILE_H
