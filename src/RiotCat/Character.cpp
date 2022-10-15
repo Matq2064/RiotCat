@@ -77,7 +77,33 @@ void CCharacter::WallCollision() {
     }
 }
 
-bool CCharacter::TileCollision() {
+void CCharacter::TileCollisions() {
+    double DestinationX = m_x;
+    double DestinationY = m_y;
+    m_x = m_lastx;
+    m_y = m_lasty;
+    double TravelX = DestinationX - m_x;
+    double TravelY = DestinationY - m_y;
+    double Travel = sqrt(pow(TravelX, 2) + pow(TravelY, 2));
+    if (Travel > 0.0) {
+        int IntTravel = int(Travel);
+        double SliceX = TravelX / (double)IntTravel;
+        double SliceY = TravelY / (double)IntTravel;
+        double Remainder = Travel - (double)IntTravel;
+
+        for (int j = 0; j < IntTravel; j++) {
+            m_x += SliceX;
+            m_y += SliceY;
+            TileCollision();
+        }
+
+        m_x += TravelX / Travel * Remainder;
+        m_y += TravelY / Travel * Remainder;
+        TileCollision();
+    }
+}
+
+void CCharacter::TileCollision() {
     CTileMap* pTilemap = m_pGameworld->TileMap();
 
     double SideLeft = m_x - m_w2;
@@ -194,30 +220,23 @@ bool CCharacter::TileCollision() {
 
     // Snapping (2 Corners or >1 Walls)
 
-    bool Collided = false;
     if (WallTop) {
         m_y = pTilemap->TileHighFace(SideTop) + m_h2;
         m_yvel = 0.0;
-        Collided = true;
     }
     if (WallRight) {
         m_x = pTilemap->TileLowFace(SideRight) - m_w2;
         m_xvel = 0.0;
-        Collided = true;
     }
     m_Jump = WallBottom;
     if (WallBottom) {
         m_y = pTilemap->TileLowFace(SideBottom) - m_h2;
         m_yvel = 0.0;
-        Collided = true;
     }
     if (WallLeft) {
         m_x = pTilemap->TileHighFace(SideLeft) + m_w2;
         m_xvel = 0.0;
-        Collided = true;
     }
-    if (Collided) return true;
-    return false;
 }
 
 void CCharacter::Tick() {
@@ -234,36 +253,10 @@ void CCharacter::Tick() {
     m_x += m_xvel * DeltaTime;
     m_y += m_yvel * DeltaTime;
 
-    // Percise tile collisions pt1
-
-    CTileMap* pTilemap = m_pGameworld->TileMap();
-    double DestinationX = m_x;
-    double DestinationY = m_y;
-    m_x = m_lastx;
-    m_y = m_lasty;
-    double TravelX = DestinationX - m_x;
-    double TravelY = DestinationY - m_y;
-    double Travel = sqrt(pow(TravelX, 2) + pow(TravelY, 2));
-    if (Travel > 0.0) {
-        double SliceX = TravelX / Travel;
-        double SliceY = TravelY / Travel;
-        double Remainder = Travel - (double)(int)Travel;
-
-        for (int j = 0; j < (int)Travel; j++) {
-            m_x += SliceX;
-            m_y += SliceY;
-
-            TileCollision();
-        }
-
-        m_x += SliceX * Remainder;
-        m_y += SliceY * Remainder;
-        TileCollision();
-    }
-
-   WallCollision();
-   m_lastx = m_x;
-   m_lasty = m_y;
+    TileCollisions();
+    WallCollision();
+    m_lastx = m_x;
+    m_lasty = m_y;
 }
 
 void CCharacter::Draw() {

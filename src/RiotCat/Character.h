@@ -16,7 +16,8 @@ private:
     void Initialize(CGameWorld* pGameworld);
     void Movement();
     void WallCollision();
-    bool TileCollision();
+    void TileCollision();
+    void TileCollisions();
 
 public:
     CCharacter(CGameWorld* pGameworld);
