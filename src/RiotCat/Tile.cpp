@@ -4,8 +4,8 @@
 SDL_Color TileColor(TileType type) {
     switch (type) {
         default:
-        case TILE_SOLID:
-            return SDL_Color{ 255, 0, 0, 255 };
+        case TILE_SOLID: return SDL_Color{ 255, 0, 0, 255 };
+        case TILE_SPAWNPOINT: return SDL_Color{ 0, 255, 0, 255};
     }
 }
 
@@ -82,9 +82,27 @@ void CTileMap::LoadMap(const char* filepath) {
     Mapfile.Close();
 }
 
-CTile* CTileMap::GetTileWorld(vec2d point) {
-    int x = point.x / m_TileSize;
-    int y = point.y / m_TileSize;
+void CTileMap::FindTileWorld(TileType type, double* outx, double* outy) {
+    int tilex, tiley;
+    FindTile(type, &tilex, &tiley);
+
+    *outx = ((double)(tilex) + 0.5) * m_TileSize;
+    *outy = ((double)(tiley) + 0.5) * m_TileSize;
+}
+
+void CTileMap::FindTile(TileType type, int* outx, int* outy) {
+    for (int i = 0; i < m_Width * m_Height; i++) {
+        TileType Type = m_aTiles[i].GetType();
+        if (Type != type) continue;
+
+        *outx = i % m_Width;
+        *outy = i / m_Width;
+    }
+}
+
+CTile* CTileMap::GetTileWorld(double x, double y) {
+    x /= m_TileSize;
+    y /= m_TileSize;
 
     return GetTile((int)x, (int)y);
 }
@@ -97,4 +115,12 @@ CTile* CTileMap::GetTile(int tilex, int tiley) {
     if (tiley >= m_Height) tiley = m_Height - 1;
 
     return &m_aTiles[tiley * m_Width + tilex];
+}
+
+double CTileMap::TileHighFace(double v) {
+    return TileLowFace(v) + m_TileSize;
+}
+
+double CTileMap::TileLowFace(double v) {
+    return (double)((int)(v / (double)m_TileSize) * m_TileSize);
 }

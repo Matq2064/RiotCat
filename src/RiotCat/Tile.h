@@ -2,11 +2,11 @@
 #define RIOTCAT_TILE_H
 
 #include "Window.h"
-#include "vec2.h"
 
 enum TileType {
     TILE_EMPTY,
-    TILE_SOLID
+    TILE_SOLID,
+    TILE_SPAWNPOINT
 };
 
 SDL_Color TileColor(TileType type);
@@ -38,8 +38,12 @@ public:
 
     void SaveMap(const char* filepath);
     void LoadMap(const char* filepath);
-    CTile* GetTileWorld(vec2d point);
+    void FindTileWorld(TileType type, double* outx, double* outy);
+    void FindTile(TileType type, int* outx, int* outy);
+    CTile* GetTileWorld(double x, double y);
     CTile* GetTile(int tilex, int tiley);
+    double TileHighFace(double v);
+    double TileLowFace(double v);
     int TileSize() const { return m_TileSize; }
 };
 

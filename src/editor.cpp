@@ -17,6 +17,7 @@ int main() {
     CDrawing* pDrawing = pWindow->Drawing();
 
     pTilemap = new CETileMap(pWindow, 20, 20);
+    pTilemap->LoadMap("MyFirstMap.rc");
 
     while (true) {
         pClock->Begin();

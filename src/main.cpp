@@ -3,6 +3,7 @@
 #include "RiotCat/Window.h"
 #include "RiotCat/Gameworld.h"
 #include "RiotCat/Character.h"
+#include <iostream>
 using namespace std;
 
 CWindow* pWindow;
@@ -19,7 +20,7 @@ int main() {
     CDrawing* pDrawing = pWindow->Drawing();
 
     pGameworld = new CGameWorld(pWindow, 20, 20);
-    pCharacter = new CCharacter(pGameworld, 300, 300);
+    pCharacter = new CCharacter(pGameworld);
 
     while (true) {
         pClock->Begin();

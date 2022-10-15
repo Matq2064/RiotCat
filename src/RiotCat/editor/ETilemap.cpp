@@ -4,6 +4,7 @@ CETileMap::CETileMap(CWindow *pWindow, int width, int height)
     : CTileMap(pWindow, width, height) {
     CInput* pInput = m_pWindow->Input();
     pInput->AddButton(SDL_BUTTON_LEFT);
+    pInput->AddButton(SDL_BUTTON_MIDDLE);
     pInput->AddButton(SDL_BUTTON_RIGHT);
     pInput->AddKey(SDL_SCANCODE_O);
     pInput->AddKey(SDL_SCANCODE_P);
@@ -22,8 +23,9 @@ void CETileMap::Tick() {
         LoadMap("MyFirstMap.rc");
 
     bool LClick = pInput->GetButton(SDL_BUTTON_LEFT);
+    bool MClick = pInput->GetButton(SDL_BUTTON_MIDDLE);
     bool RClick = pInput->GetButton(SDL_BUTTON_RIGHT);
-    if (LClick || RClick) {
+    if (LClick || MClick || RClick) {
         int x, y;
         SDL_GetMouseState(&x, &y);
 
@@ -33,7 +35,10 @@ void CETileMap::Tick() {
         if (x >= m_Width || y >= m_Height)
             return;
 
-        TileType Type = LClick ? TILE_SOLID : TILE_EMPTY;
+        TileType Type;
+        if (LClick) Type = TILE_SOLID;
+        else if (MClick) Type = TILE_SPAWNPOINT;
+        else Type == TILE_EMPTY;
         m_aTiles[y * m_Width + x].SetType(Type);
     }
 }

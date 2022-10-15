@@ -1,13 +1,26 @@
 #include "Character.h"
-#include "vec2.h"
-#include <vector>
+#include <iostream>
+using namespace std;
 
-CCharacter::CCharacter(CGameWorld* pGameworld, double X, double Y) {
+CCharacter::CCharacter(CGameWorld* pGameworld)
+        : CHandleRect(0, 0, 20.0, 30.0) {
+    pGameworld->SpawnCoordinates(&m_x, &m_y);
+    Initialize(pGameworld);
+}
+
+CCharacter::CCharacter(CGameWorld* pGameworld, double x, double y)
+        : CHandleRect(x, y, 20.0, 30.0) {
+    Initialize(pGameworld);
+}
+
+CCharacter::~CCharacter() {
+
+}
+
+void CCharacter::Initialize(CGameWorld* pGameworld) {
     m_pGameworld = pGameworld;
-    m_x = X;
-    m_y = Y;
-    m_w = 20;
-    m_h = 30;
+    m_lastx = m_x;
+    m_lasty = m_y;
     m_xvel = 0.0;
     m_yvel = 0.0;
     m_Jump = false;
@@ -17,10 +30,6 @@ CCharacter::CCharacter(CGameWorld* pGameworld, double X, double Y) {
     pInput->AddKey(SDL_SCANCODE_D);
     pInput->AddKey(SDL_SCANCODE_S);
     pInput->AddKey(SDL_SCANCODE_A);
-}
-
-CCharacter::~CCharacter() {
-
 }
 
 void CCharacter::Movement() {
@@ -68,6 +77,149 @@ void CCharacter::WallCollision() {
     }
 }
 
+bool CCharacter::TileCollision() {
+    CTileMap* pTilemap = m_pGameworld->TileMap();
+
+    double SideLeft = m_x - m_w2;
+    double SideRight = m_x + m_w2;
+    double SideTop = m_y - m_h2;
+    double SideBottom = m_y + m_h2;
+
+    // Corner variables
+
+    bool CornerTopLeft = pTilemap->GetTileWorld(SideLeft, SideTop)->GetType() == TileType::TILE_SOLID;
+    bool CornerTopRight = pTilemap->GetTileWorld(SideRight, SideTop)->GetType() == TileType::TILE_SOLID;
+    bool CornerBottomLeft = pTilemap->GetTileWorld(SideLeft, SideBottom)->GetType() == TileType::TILE_SOLID;
+    bool CornerBottomRight = pTilemap->GetTileWorld(SideRight, SideBottom)->GetType() == TileType::TILE_SOLID;
+
+    // Double corner variables
+
+    bool DoubleTop = CornerTopLeft && CornerTopRight;
+    bool DoubleRight = CornerTopRight && CornerBottomRight;
+    bool DoubleBottom = CornerBottomLeft && CornerBottomRight;
+    bool DoubleLeft = CornerTopLeft && CornerBottomLeft;
+
+    // Wall variables
+
+    bool WallTop = DoubleTop;
+    bool WallRight = DoubleRight;
+    bool WallBottom = DoubleBottom;
+    bool WallLeft = DoubleLeft;
+
+    // Wall finding
+
+    if (!DoubleTop) {
+        int Walls = 0;
+        int WallLoops = (int) (SideRight / (double) pTilemap->TileSize()) -
+                        (int) (SideLeft / (double) pTilemap->TileSize()) - 1;
+        for (int i = 1; i <= WallLoops; i++) {
+            double CurrentX = SideLeft + pTilemap->TileSize() * i;
+
+            TileType Type = pTilemap->GetTileWorld(CurrentX, SideTop)->GetType();
+            if (Type == TileType::TILE_SOLID) Walls++;
+        }
+        WallTop = (bool) Walls;
+    }
+    if (!DoubleRight) {
+        int Walls = 0;
+        int WallLoops = (int) (SideBottom / (double) pTilemap->TileSize()) -
+                        (int) (SideTop / (double) pTilemap->TileSize()) - 1;
+        for (int i = 1; i <= WallLoops; i++) {
+            double CurrentY = SideTop + pTilemap->TileSize() * i;
+
+            TileType Type = pTilemap->GetTileWorld(SideRight, CurrentY)->GetType();
+            if (Type == TileType::TILE_SOLID) Walls++;
+        }
+        WallRight = (bool) Walls;
+    }
+    if (!DoubleBottom) {
+        int Walls = 0;
+        int WallLoops = (int) (SideRight / (double) pTilemap->TileSize()) -
+                        (int) (SideLeft / (double) pTilemap->TileSize()) - 1;
+        for (int i = 1; i <= WallLoops; i++) {
+            double CurrentX = SideLeft + pTilemap->TileSize() * i;
+
+            TileType Type = pTilemap->GetTileWorld(CurrentX, SideBottom)->GetType();
+            if (Type == TileType::TILE_SOLID) Walls++;
+        }
+        WallBottom = (bool) Walls;
+    }
+    if (!DoubleLeft) {
+        int Walls = 0;
+        int WallLoops = (int) (SideBottom / (double) pTilemap->TileSize()) -
+                        (int) (SideTop / (double) pTilemap->TileSize()) - 1;
+        for (int i = 1; i <= WallLoops; i++) {
+            double CurrentY = SideTop + pTilemap->TileSize() * i;
+
+            TileType Type = pTilemap->GetTileWorld(SideLeft, CurrentY)->GetType();
+            if (Type == TileType::TILE_SOLID) Walls++;
+        }
+        WallLeft = (bool) Walls;
+    }
+
+    // Snapping (1 Corner and closest axis)
+
+    if (CornerTopLeft && !WallTop && !WallLeft) {
+        double difx = SideLeft - pTilemap->TileLowFace(SideLeft);
+        double dify = SideTop - pTilemap->TileLowFace(SideTop);
+
+        if (difx > dify) WallLeft = true;
+        else if (difx < dify) WallTop = true;
+        else; // CORNER CASE
+    }
+    if (CornerTopRight && !WallTop && !WallRight) {
+        double difx = pTilemap->TileHighFace(SideRight) - SideRight;
+        double dify = SideTop - pTilemap->TileLowFace(SideTop);
+
+        if (difx > dify) WallRight = true;
+        else if (difx < dify) WallTop = true;
+        else; // CORNER CASE
+    }
+    if (CornerBottomRight && !WallBottom && !WallRight) {
+        double difx = pTilemap->TileHighFace(SideRight) - SideRight;
+        double dify = pTilemap->TileHighFace(SideBottom) - SideBottom;
+
+        if (difx > dify) WallRight = true;
+        else if (difx < dify) WallBottom = true;
+        else; // CORNER CASE
+    }
+    if (CornerBottomLeft && !WallBottom && !WallLeft) {
+        double difx = SideLeft - pTilemap->TileLowFace(SideLeft);
+        double dify = pTilemap->TileHighFace(SideBottom) - SideBottom;
+
+        if (difx > dify) WallLeft = true;
+        else if (difx < dify) WallBottom = true;
+        else; // CORNER CASE
+    }
+
+    // Snapping (2 Corners or >1 Walls)
+
+    bool Collided = false;
+    if (WallTop) {
+        m_y = pTilemap->TileHighFace(SideTop) + m_h2;
+        m_yvel = 0.0;
+        Collided = true;
+    }
+    if (WallRight) {
+        m_x = pTilemap->TileLowFace(SideRight) - m_w2;
+        m_xvel = 0.0;
+        Collided = true;
+    }
+    m_Jump = WallBottom;
+    if (WallBottom) {
+        m_y = pTilemap->TileLowFace(SideBottom) - m_h2;
+        m_yvel = 0.0;
+        Collided = true;
+    }
+    if (WallLeft) {
+        m_x = pTilemap->TileHighFace(SideLeft) + m_w2;
+        m_xvel = 0.0;
+        Collided = true;
+    }
+    if (Collided) return true;
+    return false;
+}
+
 void CCharacter::Tick() {
     CClock* pClock = m_pGameworld->Window()->Clock();
     double DeltaTime = pClock->TimeElapsed();
@@ -82,57 +234,36 @@ void CCharacter::Tick() {
     m_x += m_xvel * DeltaTime;
     m_y += m_yvel * DeltaTime;
 
-    //
+    // Percise tile collisions pt1
 
     CTileMap* pTilemap = m_pGameworld->TileMap();
+    double DestinationX = m_x;
+    double DestinationY = m_y;
+    m_x = m_lastx;
+    m_y = m_lasty;
+    double TravelX = DestinationX - m_x;
+    double TravelY = DestinationY - m_y;
+    double Travel = sqrt(pow(TravelX, 2) + pow(TravelY, 2));
+    if (Travel > 0.0) {
+        double SliceX = TravelX / Travel;
+        double SliceY = TravelY / Travel;
+        double Remainder = Travel - (double)(int)Travel;
 
+        for (int j = 0; j < (int)Travel; j++) {
+            m_x += SliceX;
+            m_y += SliceY;
 
-    double DLeft = m_x - m_w/2;
-    double DRight = m_x + m_w/2;
-    double DTop = m_y - m_h/2;
-    double DBottom = m_y + m_h/2;
-
-    TileType TopLeft = pTilemap->GetTileWorld(vec2d(DLeft, DTop))->GetType();
-    TileType TopRight = pTilemap->GetTileWorld(vec2d(DRight, DTop))->GetType();
-    TileType BottomLeft = pTilemap->GetTileWorld(vec2d(DLeft, DBottom))->GetType();
-    TileType BottomRight = pTilemap->GetTileWorld(vec2d(DRight, DBottom))->GetType();
-
-    bool Left = TopLeft == TILE_SOLID && BottomLeft == TILE_SOLID;
-    bool Right = TopRight == TILE_SOLID && BottomRight == TILE_SOLID;
-    bool Top = TopLeft == TILE_SOLID && TopRight == TILE_SOLID;
-    bool Bottom = BottomLeft == TILE_SOLID && BottomRight == TILE_SOLID;
-
-    if (Bottom != Top) {
-        if (Bottom) {
-            int tiley = (int)(DBottom / (double)pTilemap->TileSize());
-            double y = tiley * pTilemap->TileSize();
-            m_y = y - m_h / 2;
-            m_yvel = 0.0;
-            m_Jump = true;
-        } else {
-            int tiley = (int)(DTop / (double)pTilemap->TileSize()) + 1;
-            double y = tiley * pTilemap->TileSize();
-            m_y = y + m_h / 2;
-            m_yvel = 0.0;
+            TileCollision();
         }
-    }
-    if (Right != Left) {
-        if (Right) {
-            int tilex = (int)(DRight / (double)pTilemap->TileSize());
-            double x = tilex * pTilemap->TileSize();
-            m_x = x - m_w / 2;
-            m_xvel = 0.0;
-        } else {
-            int tilex = (int)(DLeft / (double)pTilemap->TileSize()) + 1;
-            double x = tilex * pTilemap->TileSize();
-            m_x = x + m_w / 2;
-            m_xvel = 0.0;
-        }
+
+        m_x += SliceX * Remainder;
+        m_y += SliceY * Remainder;
+        TileCollision();
     }
 
-    // :E
-
-    WallCollision();
+   WallCollision();
+   m_lastx = m_x;
+   m_lasty = m_y;
 }
 
 void CCharacter::Draw() {

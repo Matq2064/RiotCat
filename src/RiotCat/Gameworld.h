@@ -17,6 +17,7 @@ public:
 
     void Tick();
     void Draw();
+    void SpawnCoordinates(double* x, double* y);
     CWindow* Window() const { return m_pWindow; }
     CTileMap* TileMap() const { return m_pTilemap; }
 };
