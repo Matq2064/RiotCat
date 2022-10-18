@@ -4,6 +4,10 @@ CDrawing::CDrawing(SDL_Renderer* pRenderer) {
     m_pRenderer = pRenderer;
 }
 
+CDrawing::~CDrawing() {
+
+}
+
 void CDrawing::Clear() {
     SDL_RenderClear(m_pRenderer);
 }

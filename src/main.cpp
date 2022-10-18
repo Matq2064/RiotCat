@@ -3,6 +3,8 @@
 #include "RiotCat/Window.h"
 #include "RiotCat/Gameworld.h"
 #include "RiotCat/Character.h"
+
+#include <SDL_ttf.h>
 #include <iostream>
 using namespace std;
 
@@ -11,6 +13,8 @@ CGameWorld* pGameworld;
 CCharacter* pCharacter;
 
 int main() {
+    SDL_Init(0);
+    TTF_Init();
     pWindow = new CWindow("RiotCat", 900, 700);
     if (!pWindow->Initialized())
         return -1;
@@ -37,10 +41,10 @@ int main() {
 
         pGameworld->Draw();
         pCharacter->Draw();
+        pClock->Draw();
 
         pDrawing->Present();
-        do { pClock->End(); }
-        while (pClock->TimeElapsed() < 1.0 / 75.0);
+        pClock->Tick();
     }
 
     delete pCharacter;

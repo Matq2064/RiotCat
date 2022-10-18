@@ -1,18 +1,18 @@
 #ifndef RIOTCAT_WINDOW_H
 #define RIOTCAT_WINDOW_H
 
-#include "Clock.h"
 #include "Input.h"
 #include "Drawing.h"
+#include "Clock.h"
 
 class CWindow
 {
 private:
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pRenderer = nullptr;
-    CClock* m_pClock = nullptr;
     CInput* m_pInput = nullptr;
     CDrawing* m_pDrawing = nullptr;
+    CClock* m_pClock = nullptr;
     bool m_Initialized = false;
 
 public:

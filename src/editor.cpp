@@ -8,6 +8,8 @@ CWindow* pWindow;
 CETileMap* pTilemap;
 
 int main() {
+    SDL_Init(0);
+    TTF_Init();
     pWindow = new CWindow("RiotCat", 900, 700);
     if (!pWindow->Initialized())
         return -1;
@@ -32,10 +34,10 @@ int main() {
         pDrawing->Clear();
 
         pTilemap->Draw();
+        pClock->Draw();
 
         pDrawing->Present();
-        do { pClock->End(); }
-        while (pClock->TimeElapsed() < 1.0 / 75.0);
+        pClock->Tick();
     }
 
     delete pTilemap;

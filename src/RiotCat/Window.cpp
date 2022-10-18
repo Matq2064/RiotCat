@@ -12,9 +12,9 @@ CWindow::CWindow(const char* title, int width, int height)
     if (m_pRenderer == nullptr)
         printf("Failed to initialize SDL_Renderer: %s\n", SDL_GetError());
 
-    m_pClock = new CClock(60.0);
     m_pInput = new CInput();
     m_pDrawing = new CDrawing(m_pRenderer);
+    m_pClock = new CClock(m_pWindow, m_pDrawing, m_pInput, 244.0);
 
     if (m_pWindow && m_pRenderer)
         m_Initialized = true;
