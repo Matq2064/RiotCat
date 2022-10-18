@@ -1,8 +1,12 @@
 #include "Input.h"
 #include <algorithm>
+#include <iostream>
+using namespace std;
 
 CInput::CInput() {
-
+    m_ScrollDirection = 0;
+    m_MouseX = 0;
+    m_MouseY = 0;
 }
 
 void CInput::Tick() {
@@ -10,6 +14,7 @@ void CInput::Tick() {
     m_mLastInputKeyMapping.insert(m_mInputKeyMapping.begin(), m_mInputKeyMapping.end());
     m_mLastInputButtonMapping.clear();
     m_mLastInputButtonMapping.insert(m_mInputButtonMapping.begin(), m_mInputButtonMapping.end());
+    m_ScrollDirection = 0;
 
     SDL_Event Event;
     while (SDL_PollEvent(&Event)) {
@@ -37,8 +42,16 @@ void CInput::Tick() {
                 if (m_mInputButtonMapping.find(Button) != m_mInputButtonMapping.end())
                     m_mInputButtonMapping[Button] = false;
             } break;
+            case SDL_MOUSEWHEEL: {
+                cout << Event.wheel.y << endl;
+                m_ScrollDirection = (int)Event.wheel.y;
+            } break;
         }
     }
+
+    m_LastMouseX = m_MouseX;
+    m_LastMouseY = m_MouseY;
+    SDL_GetMouseState(&m_MouseX, &m_MouseY);
 }
 
 
@@ -98,4 +111,14 @@ bool CInput::GetLastButton(int sdl_mapping) {
 
 bool CInput::GetButtonTap(int sdl_mapping) {
     return GetButton(sdl_mapping) && !GetLastButton(sdl_mapping);
+}
+
+void CInput::GetMousePos(int* outx, int* outy) {
+    *outx = m_MouseX;
+    *outy = m_MouseY;
+}
+
+void CInput::GetLastMousePos(int* outx, int* outy) {
+    *outx = m_LastMouseX;
+    *outy = m_LastMouseY;
 }

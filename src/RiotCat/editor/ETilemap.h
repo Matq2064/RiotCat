@@ -5,6 +5,9 @@
 #include <map>
 
 class CETileMap : public CTileMap {
+private:
+    TileType m_CurrentTile;
+
 public:
     CETileMap(CWindow* pWindow, int width, int height);
     ~CETileMap();

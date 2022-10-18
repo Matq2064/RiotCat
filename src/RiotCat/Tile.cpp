@@ -3,9 +3,10 @@
 
 SDL_Color TileColor(TileType type) {
     switch (type) {
-        default:
-        case TILE_SOLID: return SDL_Color{ 255, 0, 0, 255 };
-        case TILE_SPAWNPOINT: return SDL_Color{ 0, 255, 0, 255};
+        default: SDL_Color{ 255, 255, 255, 255 };
+        case TILE_SOLID: return SDL_Color{ 0, 0, 255, 255 };
+        case TILE_DEATH: return SDL_Color{ 255, 0, 0, 255 };
+        case TILE_SPAWNPOINT: return SDL_Color{ 0, 255, 0, 255 };
     }
 }
 

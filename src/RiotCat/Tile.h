@@ -4,9 +4,11 @@
 #include "Window.h"
 
 enum TileType {
-    TILE_EMPTY,
+    TILE_EMPTY = -1,
     TILE_SOLID,
-    TILE_SPAWNPOINT
+    TILE_DEATH,
+    TILE_SPAWNPOINT,
+    NUM_TILES
 };
 
 SDL_Color TileColor(TileType type);

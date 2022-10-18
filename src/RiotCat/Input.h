@@ -12,6 +12,7 @@ private:
     map<int, bool> m_mLastInputKeyMapping;
     map<int, bool> m_mInputButtonMapping;
     map<int, bool> m_mLastInputButtonMapping;
+    int m_ScrollDirection, m_MouseX, m_MouseY, m_LastMouseX, m_LastMouseY;
     bool m_Quit = false;
 
 public:
@@ -28,6 +29,9 @@ public:
     bool GetButton(int sdl_index);
     bool GetLastButton(int sdl_index);
     bool GetButtonTap(int sdl_index);
+    void GetMousePos(int* outx, int* outy);
+    void GetLastMousePos(int* outx, int* outy);
+    int ScrollDirection() const { return m_ScrollDirection; };
 
 };
 
