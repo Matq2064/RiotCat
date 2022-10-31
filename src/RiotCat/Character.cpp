@@ -264,5 +264,5 @@ void CCharacter::Draw() {
 
     SDL_Rect Rect = GetRect();
     pDrawing->SetColor(255, 255, 255, 255);
-    pDrawing->FillRect(&Rect);
+    pDrawing->FillRect(GetRect(), true);
 }

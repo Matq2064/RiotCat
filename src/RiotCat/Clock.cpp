@@ -65,18 +65,18 @@ void CClock::End()
 }
 
 void CClock::Tick() {
-    bool Left = m_pInput->GetKey(SDL_SCANCODE_LEFT);
-    bool Right = m_pInput->GetKey(SDL_SCANCODE_RIGHT);
+    // bool Left = m_pInput->GetKey(SDL_SCANCODE_LEFT);
+    // bool Right = m_pInput->GetKey(SDL_SCANCODE_RIGHT);
 
-    if (Left != Right) {
-        if (Left) m_Frequency--;
-        else m_Frequency++;
+    // if (Left != Right) {
+    //     if (Left) m_Frequency--;
+    //     else m_Frequency++;
 
-        if (m_Frequency < 1.0)
-            m_Frequency = 1.0;
+    //     if (m_Frequency < 1.0)
+    //         m_Frequency = 1.0;
 
-        m_PeriodDelay = 1.0 / m_Frequency;
-    }
+    //     m_PeriodDelay = 1.0 / m_Frequency;
+    // }
 
     do { End(); }
     while (m_TimeElapsed < m_PeriodDelay);

@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "Drawing.h"
 #include "Clock.h"
+#include "Camera.h"
 
 class CWindow
 {

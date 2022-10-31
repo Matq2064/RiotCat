@@ -2,10 +2,13 @@
 
 #include "RiotCat/Window.h"
 #include "RiotCat/editor/ETilemap.h"
+#include "RiotCat/editor/Ghost.h"
 using namespace std;
 
 CWindow* pWindow;
 CETileMap* pTilemap;
+CCamera* pCamera;
+CGhost* pGhost;
 
 int main() {
     SDL_Init(0);
@@ -17,6 +20,10 @@ int main() {
     CClock* pClock = pWindow->Clock();
     CInput* pInput = pWindow->Input();
     CDrawing* pDrawing = pWindow->Drawing();
+    pCamera = new CCamera(0, 0, 900, 700, FOLLOW_INSTANT);
+    pDrawing->SetCamera(pCamera);
+    pGhost = new CGhost(pInput, 0, 0);
+    pCamera->SetFollow(pGhost);
 
     pTilemap = new CETileMap(pWindow, 20, 20);
     pTilemap->LoadMap("MyFirstMap.rc");
@@ -29,17 +36,20 @@ int main() {
             break;
 
         pTilemap->Tick();
+        pGhost->Tick();
+        pCamera->Tick();
 
         pDrawing->SetColor(0, 0, 0, 255);
         pDrawing->Clear();
 
         pTilemap->Draw();
-        pClock->Draw();
 
         pDrawing->Present();
         pClock->Tick();
     }
 
+    delete pGhost;
+    delete pCamera;
     delete pTilemap;
     delete pWindow;
     return 0;

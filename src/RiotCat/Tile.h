@@ -46,6 +46,7 @@ public:
     CTile* GetTile(int tilex, int tiley);
     double TileHighFace(double v);
     double TileLowFace(double v);
+    void Resize(int width, int height);
     int TileSize() const { return m_TileSize; }
 };
 

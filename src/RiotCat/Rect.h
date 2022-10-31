@@ -13,6 +13,11 @@ public:
 
     SDL_Rect GetRect();
     void Morph(double w, double h);
+    void GivePos(CHandleRect* pOther);
+    double GetX() const { return m_x; }
+    double GetY() const { return m_y; }
+    double GetW() const { return m_w; }
+    double GetH() const { return m_h; }
 };
 
 #endif //RIOTCATE_RECT_H

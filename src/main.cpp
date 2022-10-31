@@ -3,6 +3,7 @@
 #include "RiotCat/Window.h"
 #include "RiotCat/Gameworld.h"
 #include "RiotCat/Character.h"
+#include "RiotCat/Camera.h"
 
 #include <SDL_ttf.h>
 #include <iostream>
@@ -11,6 +12,7 @@ using namespace std;
 CWindow* pWindow;
 CGameWorld* pGameworld;
 CCharacter* pCharacter;
+CCamera* pCamera;
 
 int main() {
     SDL_Init(0);
@@ -22,9 +24,13 @@ int main() {
     CClock* pClock = pWindow->Clock();
     CInput* pInput = pWindow->Input();
     CDrawing* pDrawing = pWindow->Drawing();
+    pCamera = new CCamera(0, 0, 900, 700, FOLLOW_SLOW);
+    pDrawing->SetCamera(pCamera);
 
     pGameworld = new CGameWorld(pWindow, 20, 20);
     pCharacter = new CCharacter(pGameworld);
+    pCharacter->GivePos(pCamera);
+    pCamera->SetFollow(pCharacter);
 
     while (true) {
         pClock->Begin();
@@ -35,18 +41,19 @@ int main() {
 
         pGameworld->Tick();
         pCharacter->Tick();
+        pCamera->Tick();
 
         pDrawing->SetColor(0, 0, 0, 255);
         pDrawing->Clear();
 
         pGameworld->Draw();
         pCharacter->Draw();
-        pClock->Draw();
 
         pDrawing->Present();
         pClock->Tick();
     }
 
+    delete pCamera;
     delete pCharacter;
     delete pGameworld;
     delete pWindow;

@@ -25,3 +25,8 @@ void CHandleRect::Morph(double w, double h) {
     m_w2 = w / 2.0;
     m_h2 = h / 2.0;
 }
+
+void CHandleRect::GivePos(CHandleRect* pOther) {
+    pOther->m_x = m_x;
+    pOther->m_y = m_y;
+}

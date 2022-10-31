@@ -6,10 +6,14 @@ CETileMap::CETileMap(CWindow *pWindow, int width, int height)
     m_CurrentTile = (TileType)0;
 
     CInput* pInput = m_pWindow->Input();
-    pInput->AddButton(SDL_BUTTON_LEFT);
     pInput->AddButton(SDL_BUTTON_RIGHT);
+    pInput->AddButton(SDL_BUTTON_LEFT);
     pInput->AddKey(SDL_SCANCODE_O);
     pInput->AddKey(SDL_SCANCODE_P);
+    pInput->AddKey(SDL_SCANCODE_UP);
+    pInput->AddKey(SDL_SCANCODE_RIGHT);
+    pInput->AddKey(SDL_SCANCODE_DOWN);
+    pInput->AddKey(SDL_SCANCODE_LEFT);
 }
 
 CETileMap::~CETileMap() {
@@ -17,19 +21,38 @@ CETileMap::~CETileMap() {
 }
 
 void CETileMap::Tick() {
+    CDrawing* pDrawing = m_pWindow->Drawing();
     CInput* pInput = m_pWindow->Input();
 
-    if (pInput->GetKeyTap(SDL_SCANCODE_O))
-        SaveMap("MyFirstMap.rc");
-    if (pInput->GetKeyTap(SDL_SCANCODE_P))
-        LoadMap("MyFirstMap.rc");
+    bool Save = pInput->GetKeyTap(SDL_SCANCODE_O);
+    bool Load = pInput->GetKeyTap(SDL_SCANCODE_P);
+    bool HeightDown = pInput->GetKeyTap(SDL_SCANCODE_UP);
+    bool WidthUp = pInput->GetKeyTap(SDL_SCANCODE_RIGHT);
+    bool HeightUp = pInput->GetKeyTap(SDL_SCANCODE_DOWN);
+    bool WidthDown = pInput->GetKeyTap(SDL_SCANCODE_LEFT);
+    bool LClick = pInput->GetButton(SDL_BUTTON_LEFT);
+    bool RClick = pInput->GetButton(SDL_BUTTON_RIGHT);
+    int Scroll = pInput->ScrollDirection();
 
-    m_CurrentTile = (TileType)(m_CurrentTile + pInput->ScrollDirection());
+    if (Save) SaveMap("MyFirstMap.rc");
+    if (Load) LoadMap("MyFirstMap.rc");
+
+
+    bool NewWidth = WidthUp != WidthDown;
+    bool NewHeight = HeightUp != HeightDown;
+
+    if (NewWidth) {
+        if (WidthUp) Resize(m_Width + 1, m_Height);
+        else Resize(m_Width - 1, m_Height);
+    } else if (NewHeight) {
+        if (HeightUp) Resize(m_Width, m_Height + 1);
+        else Resize(m_Width, m_Height - 1);
+    }
+
+    m_CurrentTile = (TileType)(m_CurrentTile + Scroll);
     if (m_CurrentTile < 0) m_CurrentTile = (TileType)(NUM_TILES - 1);
     else if (m_CurrentTile >= NUM_TILES) m_CurrentTile = (TileType)0;
 
-    bool LClick = pInput->GetButton(SDL_BUTTON_LEFT);
-    bool RClick = pInput->GetButton(SDL_BUTTON_RIGHT);
     if (LClick || RClick) {
         TileType Type;
         if (LClick) Type = m_CurrentTile;
@@ -38,6 +61,10 @@ void CETileMap::Tick() {
         int StartX, StartY, EndX, EndY;
         pInput->GetLastMousePos(&StartX, &StartY);
         pInput->GetMousePos(&EndX, &EndY);
+
+        pDrawing->ReverseTranslate(&StartX, &StartY);
+        pDrawing->ReverseTranslate(&EndX, &EndY);
+
         int TravelX = EndX - StartX;
         int TravelY = EndY - StartY;
         double Travel = sqrt(pow(TravelX, 2) + pow(TravelY, 2));

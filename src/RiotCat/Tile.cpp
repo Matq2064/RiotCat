@@ -47,7 +47,7 @@ void CTileMap::Draw() {
         Rect.y = y * m_TileSize;
         Rect.w = m_TileSize;
         Rect.h = m_TileSize;
-        pDrawing->FillRect(&Rect);
+        pDrawing->FillRect(Rect, true);
     }
 }
 
@@ -124,4 +124,27 @@ double CTileMap::TileHighFace(double v) {
 
 double CTileMap::TileLowFace(double v) {
     return (double)((int)(v / (double)m_TileSize) * m_TileSize);
+}
+
+void CTileMap::Resize(int width, int height) {
+    CTile* aNewTiles = new CTile[width * height];
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int NewIndex = y * width + x;
+            if(x >= m_Width || y >= m_Height) { aNewTiles[NewIndex].SetType(TILE_DEATH); }
+            else {
+                int OldIndex = y * m_Width + x;
+                TileType Type = m_aTiles[OldIndex].GetType();
+
+                aNewTiles[NewIndex].SetType(Type);
+            }
+        }
+    }
+
+    m_Width = width;
+    m_Height = height;
+
+    delete[] m_aTiles;
+    m_aTiles = aNewTiles;
 }
