@@ -25,7 +25,7 @@ int main() {
     pGhost = new CGhost(pInput, 0, 0);
     pCamera->SetFollow(pGhost);
 
-    pTilemap = new CETileMap(pWindow, 20, 20);
+    pTilemap = new CETileMap(pWindow, 100, 100);
     pTilemap->LoadMap("MyFirstMap.rc");
 
     while (true) {

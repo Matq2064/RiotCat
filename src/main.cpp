@@ -27,7 +27,7 @@ int main() {
     pCamera = new CCamera(0, 0, 900, 700, FOLLOW_SLOW);
     pDrawing->SetCamera(pCamera);
 
-    pGameworld = new CGameWorld(pWindow, 20, 20);
+    pGameworld = new CGameWorld(pWindow, 100, 100);
     pCharacter = new CCharacter(pGameworld);
     pCharacter->GivePos(pCamera);
     pCamera->SetFollow(pCharacter);

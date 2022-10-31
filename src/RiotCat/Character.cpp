@@ -30,6 +30,11 @@ void CCharacter::Initialize(CGameWorld* pGameworld) {
     pInput->AddKey(SDL_SCANCODE_D);
     pInput->AddKey(SDL_SCANCODE_S);
     pInput->AddKey(SDL_SCANCODE_A);
+    pInput->AddKey(SDL_SCANCODE_R);
+    pInput->AddKey(SDL_SCANCODE_LEFT);
+    pInput->AddKey(SDL_SCANCODE_RIGHT);
+    pInput->AddKey(SDL_SCANCODE_UP);
+    pInput->AddKey(SDL_SCANCODE_DOWN);
 }
 
 void CCharacter::Movement() {
@@ -112,6 +117,18 @@ void CCharacter::TileCollision() {
     double SideBottom = m_y + m_h2;
 
     // Corner variables
+
+    bool Deth = pTilemap->GetTileWorld(SideLeft, SideTop)->GetType() == TileType::TILE_DEATH ||
+            pTilemap->GetTileWorld(SideRight, SideTop)->GetType() == TileType::TILE_DEATH ||
+            pTilemap->GetTileWorld(SideLeft, SideBottom)->GetType() == TileType::TILE_DEATH ||
+            pTilemap->GetTileWorld(SideRight, SideBottom)->GetType() == TileType::TILE_DEATH;
+
+    if (Deth) {
+        m_pGameworld->TileMap()->FindTileWorld(TileType::TILE_SPAWNPOINT, &m_x, &m_y);
+        m_lastx = m_x;
+        m_lasty = m_y;
+        return;
+    }
 
     bool CornerTopLeft = pTilemap->GetTileWorld(SideLeft, SideTop)->GetType() == TileType::TILE_SOLID;
     bool CornerTopRight = pTilemap->GetTileWorld(SideRight, SideTop)->GetType() == TileType::TILE_SOLID;
@@ -243,6 +260,30 @@ void CCharacter::Tick() {
     CClock* pClock = m_pGameworld->Window()->Clock();
     double DeltaTime = pClock->TimeElapsed();
 
+    CInput* pInput = m_pGameworld->Window()->Input();
+    bool Reset = pInput->GetKeyTap(SDL_SCANCODE_R);
+    bool HeightUp = pInput->GetKey(SDL_SCANCODE_W);
+    bool HeightDown = pInput->GetKey(SDL_SCANCODE_S);
+    bool WidthUp = pInput->GetKey(SDL_SCANCODE_D);
+    bool WidthDown = pInput->GetKey(SDL_SCANCODE_A);
+
+    if (Reset) {
+        m_pGameworld->TileMap()->FindTileWorld(TileType::TILE_SPAWNPOINT, &m_x, &m_y);
+        m_lastx = m_x;
+        m_lasty = m_y;
+        m_xvel = 0;
+        m_yvel = 0;
+    }
+
+    if (HeightUp != HeightDown) {
+        if (HeightUp) Morph(m_w, m_h + 1);
+        else Morph(m_w, m_h - 1);
+    }
+    if (WidthUp != WidthDown) {
+        if (WidthUp) Morph(m_w + 1, m_h);
+        else Morph(m_w - 1, m_h);
+    }
+
     Movement();
 
     m_yvel += GRAVITY * DeltaTime;
@@ -254,7 +295,6 @@ void CCharacter::Tick() {
     m_y += m_yvel * DeltaTime;
 
     TileCollisions();
-    WallCollision();
     m_lastx = m_x;
     m_lasty = m_y;
 }
@@ -263,6 +303,6 @@ void CCharacter::Draw() {
     CDrawing* pDrawing = m_pGameworld->Window()->Drawing();
 
     SDL_Rect Rect = GetRect();
-    pDrawing->SetColor(255, 255, 255, 255);
+    pDrawing->SetColor(255, 255, 0, 255);
     pDrawing->FillRect(GetRect(), true);
 }

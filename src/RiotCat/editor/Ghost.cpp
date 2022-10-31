@@ -13,11 +13,12 @@ using namespace std;
 #include <iostream>
 
 void CGhost::Tick() {
-    double Speed = 5.0;
     bool Up = m_pInput->GetKey(SDL_SCANCODE_W);
     bool Right = m_pInput->GetKey(SDL_SCANCODE_D);
     bool Down = m_pInput->GetKey(SDL_SCANCODE_S);
     bool Left = m_pInput->GetKey(SDL_SCANCODE_A);
+    bool SpeedUp = m_pInput->GetKey(SDL_SCANCODE_LSHIFT);
+    double Speed = SpeedUp ? 15.0 : 5.0;
 
     if (Right != Left) {
         if (Right) m_x += Speed;

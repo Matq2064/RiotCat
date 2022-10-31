@@ -14,6 +14,7 @@ CETileMap::CETileMap(CWindow *pWindow, int width, int height)
     pInput->AddKey(SDL_SCANCODE_RIGHT);
     pInput->AddKey(SDL_SCANCODE_DOWN);
     pInput->AddKey(SDL_SCANCODE_LEFT);
+    pInput->AddKey(SDL_SCANCODE_LSHIFT);
 }
 
 CETileMap::~CETileMap() {
@@ -36,7 +37,6 @@ void CETileMap::Tick() {
 
     if (Save) SaveMap("MyFirstMap.rc");
     if (Load) LoadMap("MyFirstMap.rc");
-
 
     bool NewWidth = WidthUp != WidthDown;
     bool NewHeight = HeightUp != HeightDown;
