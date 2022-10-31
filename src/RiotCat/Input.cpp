@@ -1,7 +1,5 @@
 #include "Input.h"
 #include <algorithm>
-#include <iostream>
-using namespace std;
 
 CInput::CInput() {
     m_ScrollDirection = 0;
@@ -43,7 +41,6 @@ void CInput::Tick() {
                     m_mInputButtonMapping[Button] = false;
             } break;
             case SDL_MOUSEWHEEL: {
-                cout << Event.wheel.y << endl;
                 m_ScrollDirection = (int)Event.wheel.y;
             } break;
         }
