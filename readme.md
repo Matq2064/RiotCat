@@ -1,4 +1,4 @@
-# RiotCat (Deadass)
+# RiotCat
 Are you a real person?
 
 ---
