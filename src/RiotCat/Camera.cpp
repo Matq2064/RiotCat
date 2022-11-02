@@ -20,8 +20,8 @@ void CCamera::Tick() {
                 mY = dY;
             } break;
             case FOLLOW_SLOW: {
-                mX = dX * 0.01;
-                mY = dY * 0.01;
+                mX = dX * 0.05;
+                mY = dY * 0.05;
             } break;
         }
 

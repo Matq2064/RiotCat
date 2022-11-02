@@ -9,9 +9,6 @@ CGhost::CGhost(CInput* pInput, double startx, double starty)
     pInput->AddKey(SDL_SCANCODE_D);
 }
 
-using namespace std;
-#include <iostream>
-
 void CGhost::Tick() {
     bool Up = m_pInput->GetKey(SDL_SCANCODE_W);
     bool Right = m_pInput->GetKey(SDL_SCANCODE_D);

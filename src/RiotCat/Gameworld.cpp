@@ -2,7 +2,7 @@
 
 CGameWorld::CGameWorld(CWindow* pWindow, int width, int height) {
     m_pWindow = pWindow;
-    m_pTilemap = new CTileMap(pWindow, width, height);
+    m_pTilemap = new CTileMap(pWindow, width, height, false);
     m_pTilemap->LoadMap("MyFirstMap.rc");
 }
 

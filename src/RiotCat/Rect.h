@@ -18,6 +18,8 @@ public:
     double GetY() const { return m_y; }
     double GetW() const { return m_w; }
     double GetH() const { return m_h; }
+    double* GetXPointer() { return &m_x; }
+    double* GetYPointer() { return &m_y; }
 };
 
 #endif //RIOTCATE_RECT_H

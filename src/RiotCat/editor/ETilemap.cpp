@@ -2,8 +2,8 @@
 #include <math.h>
 
 CETileMap::CETileMap(CWindow *pWindow, int width, int height)
-    : CTileMap(pWindow, width, height) {
-    m_CurrentTile = (TileType)0;
+    : CTileMap(pWindow, width, height, true) {
+    m_CurrentTile = TILES_EDITOR;
 
     CInput* pInput = m_pWindow->Input();
     pInput->AddButton(SDL_BUTTON_RIGHT);
@@ -50,8 +50,8 @@ void CETileMap::Tick() {
     }
 
     m_CurrentTile = (TileType)(m_CurrentTile + Scroll);
-    if (m_CurrentTile < 0) m_CurrentTile = (TileType)(NUM_TILES - 1);
-    else if (m_CurrentTile >= NUM_TILES) m_CurrentTile = (TileType)0;
+    if (m_CurrentTile < TILES_EDITOR) m_CurrentTile = (TileType)(NUM_TILES - 1);
+    else if (m_CurrentTile >= NUM_TILES) m_CurrentTile = TILES_EDITOR;
 
     if (LClick || RClick) {
         TileType Type;
@@ -83,7 +83,7 @@ void CETileMap::Tick() {
                 if (y < 0) y = 0;
                 if (y >= m_Height) y = m_Height - 1;
 
-                m_aTiles[y * m_Width + x].SetType(Type);
+                m_aTiles[y * m_Width + x] = ParseTile(Type);
             }
         }
         int x = (int)((double)EndX / m_TileSize);
@@ -93,7 +93,7 @@ void CETileMap::Tick() {
         if (y < 0) y = 0;
         if (y >= m_Height) y = m_Height - 1;
 
-        m_aTiles[y * m_Width + x].SetType(Type);
+        m_aTiles[y * m_Width + x] = ParseTile(Type);
     }
 }
 

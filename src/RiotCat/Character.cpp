@@ -1,15 +1,13 @@
 #include "Character.h"
-#include <iostream>
-using namespace std;
 
 CCharacter::CCharacter(CGameWorld* pGameworld)
-        : CHandleRect(0, 0, 20.0, 30.0) {
+        : CHandleRect(0, 0, 32.0, 32.0) {
     pGameworld->SpawnCoordinates(&m_x, &m_y);
     Initialize(pGameworld);
 }
 
 CCharacter::CCharacter(CGameWorld* pGameworld, double x, double y)
-        : CHandleRect(x, y, 20.0, 30.0) {
+        : CHandleRect(x, y, 32.0, 32.0) {
     Initialize(pGameworld);
 }
 
@@ -25,16 +23,41 @@ void CCharacter::Initialize(CGameWorld* pGameworld) {
     m_yvel = 0.0;
     m_Jump = false;
 
+    for (int i = 0; i < sizeof(m_aControls); i++)
+        m_aControls[i] = false;
+
+    for (int i = 0; i < sizeof(m_aColliding); i++)
+        m_aColliding[i] = false;
+
     CInput* pInput = m_pGameworld->Window()->Input();
     pInput->AddKey(SDL_SCANCODE_W);
     pInput->AddKey(SDL_SCANCODE_D);
     pInput->AddKey(SDL_SCANCODE_S);
     pInput->AddKey(SDL_SCANCODE_A);
     pInput->AddKey(SDL_SCANCODE_R);
-    pInput->AddKey(SDL_SCANCODE_LEFT);
-    pInput->AddKey(SDL_SCANCODE_RIGHT);
     pInput->AddKey(SDL_SCANCODE_UP);
     pInput->AddKey(SDL_SCANCODE_DOWN);
+}
+void CCharacter::Controls() {
+    CInput* pInput = m_pGameworld->Window()->Input();
+    m_aControls[CONTROL_JUMP] = pInput->GetKeyTap(SDL_SCANCODE_W);
+    m_aControls[CONTROL_RIGHT] = pInput->GetKey(SDL_SCANCODE_D);
+    m_aControls[CONTROL_DOWN] = pInput->GetKey(SDL_SCANCODE_S);
+    m_aControls[LEFT] = pInput->GetKey(SDL_SCANCODE_A);
+    m_aControls[CONTROL_RESET] = pInput->GetKeyTap(SDL_SCANCODE_R);
+    m_aControls[CONTROL_MORPH_VERTICAL] = pInput->GetKey(SDL_SCANCODE_UP);
+    m_aControls[CONTROL_MORPH_HORIZONTAL] = pInput->GetKey(SDL_SCANCODE_DOWN);
+}
+
+void CCharacter::Morphing() {
+    if (m_aControls[CONTROL_MORPH_HORIZONTAL] != m_aControls[CONTROL_MORPH_VERTICAL]) {
+        if (m_aControls[CONTROL_MORPH_VERTICAL] && !(m_aControls[UP] && m_aControls[DOWN])) {
+            if (m_w > 10.0) Morph(m_w-1, m_h+1);
+        }
+        else if (!(m_aControls[LEFT] && m_aControls[RIGHT])) {
+            if(m_h > 10.0) Morph(m_w+1, m_h-1);
+        }
+    }
 }
 
 void CCharacter::Movement() {
@@ -42,21 +65,16 @@ void CCharacter::Movement() {
     CClock* pClock = m_pGameworld->Window()->Clock();
     double DeltaTime = pClock->TimeElapsed();
 
-    bool Jump = pInput->GetKeyTap(SDL_SCANCODE_W);
-    bool Right = pInput->GetKey(SDL_SCANCODE_D);
-    bool Down = pInput->GetKey(SDL_SCANCODE_S);
-    bool Left = pInput->GetKey(SDL_SCANCODE_A);
-
-    double SomeAccel = 2500;
-    double Accel = SomeAccel * DeltaTime;
-    if (Jump && m_Jump) {
+    double SomeAccel = 1500;
+    double Accel = SomeAccel * DeltaTime * (m_Jump ? 1.0 : 0.5);
+    if (m_aControls[CONTROL_JUMP] && m_Jump) {
         m_yvel = -1000;
         m_Jump = false;
     }
-    if (Down) m_yvel += Accel;
+    if (m_aControls[CONTROL_DOWN]) m_yvel += Accel;
 
-    if (Left != Right) {
-        if (Left) m_xvel -= Accel;
+    if (m_aControls[LEFT] != m_aControls[CONTROL_RIGHT]) {
+        if (m_aControls[LEFT]) m_xvel -= Accel;
         else m_xvel += Accel;
     }
 }
@@ -130,10 +148,10 @@ void CCharacter::TileCollision() {
         return;
     }
 
-    bool CornerTopLeft = pTilemap->GetTileWorld(SideLeft, SideTop)->GetType() == TileType::TILE_SOLID;
-    bool CornerTopRight = pTilemap->GetTileWorld(SideRight, SideTop)->GetType() == TileType::TILE_SOLID;
-    bool CornerBottomLeft = pTilemap->GetTileWorld(SideLeft, SideBottom)->GetType() == TileType::TILE_SOLID;
-    bool CornerBottomRight = pTilemap->GetTileWorld(SideRight, SideBottom)->GetType() == TileType::TILE_SOLID;
+    bool CornerTopLeft = pTilemap->GetTileWorld(SideLeft, SideTop)->Collides();
+    bool CornerTopRight = pTilemap->GetTileWorld(SideRight, SideTop)->Collides();
+    bool CornerBottomLeft = pTilemap->GetTileWorld(SideLeft, SideBottom)->Collides();
+    bool CornerBottomRight = pTilemap->GetTileWorld(SideRight, SideBottom)->Collides();
 
     // Double corner variables
 
@@ -238,19 +256,23 @@ void CCharacter::TileCollision() {
     // Snapping (2 Corners or >1 Walls)
 
     if (WallTop) {
+        m_aColliding[UP] = true;
         m_y = pTilemap->TileHighFace(SideTop) + m_h2;
         m_yvel = 0.0;
     }
     if (WallRight) {
+        m_aColliding[RIGHT] = true;
         m_x = pTilemap->TileLowFace(SideRight) - m_w2;
         m_xvel = 0.0;
     }
     m_Jump = WallBottom;
     if (WallBottom) {
+        m_aColliding[DOWN] = true;
         m_y = pTilemap->TileLowFace(SideBottom) - m_h2;
         m_yvel = 0.0;
     }
     if (WallLeft) {
+        m_aColliding[LEFT] = true;
         m_x = pTilemap->TileHighFace(SideLeft) + m_w2;
         m_xvel = 0.0;
     }
@@ -260,14 +282,10 @@ void CCharacter::Tick() {
     CClock* pClock = m_pGameworld->Window()->Clock();
     double DeltaTime = pClock->TimeElapsed();
 
-    CInput* pInput = m_pGameworld->Window()->Input();
-    bool Reset = pInput->GetKeyTap(SDL_SCANCODE_R);
-    bool HeightUp = pInput->GetKey(SDL_SCANCODE_W);
-    bool HeightDown = pInput->GetKey(SDL_SCANCODE_S);
-    bool WidthUp = pInput->GetKey(SDL_SCANCODE_D);
-    bool WidthDown = pInput->GetKey(SDL_SCANCODE_A);
+    Controls();
+    Morphing();
 
-    if (Reset) {
+    if (m_aControls[CONTROL_RESET]) {
         m_pGameworld->TileMap()->FindTileWorld(TileType::TILE_SPAWNPOINT, &m_x, &m_y);
         m_lastx = m_x;
         m_lasty = m_y;
@@ -275,17 +293,9 @@ void CCharacter::Tick() {
         m_yvel = 0;
     }
 
-    if (HeightUp != HeightDown) {
-        if (HeightUp) Morph(m_w, m_h + 1);
-        else Morph(m_w, m_h - 1);
-    }
-    if (WidthUp != WidthDown) {
-        if (WidthUp) Morph(m_w + 1, m_h);
-        else Morph(m_w - 1, m_h);
-    }
-
     Movement();
 
+    m_xvel *= m_Jump && m_aControls[CONTROL_DOWN] ? 0.9 : 1.0;
     m_yvel += GRAVITY * DeltaTime;
 
     m_xvel *= pow(0.2, DeltaTime);
@@ -294,7 +304,11 @@ void CCharacter::Tick() {
     m_x += m_xvel * DeltaTime;
     m_y += m_yvel * DeltaTime;
 
+    for (int i = 0; i < sizeof(m_aColliding); i++)
+        m_aColliding[i] = false;
+
     TileCollisions();
+
     m_lastx = m_x;
     m_lasty = m_y;
 }

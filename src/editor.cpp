@@ -27,6 +27,7 @@ int main() {
 
     pTilemap = new CETileMap(pWindow, 100, 100);
     pTilemap->LoadMap("MyFirstMap.rc");
+    pTilemap->FindTileWorld(TileType::TILE_SPAWNPOINT, pGhost->GetXPointer(), pGhost->GetYPointer());
 
     while (true) {
         pClock->Begin();

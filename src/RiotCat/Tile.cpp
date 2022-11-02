@@ -1,25 +1,27 @@
 #include "Tile.h"
 #include "Files.h"
 
-SDL_Color TileColor(TileType type) {
+CTile CTileMap::ParseTile(TileType type) {
     switch (type) {
-        default: SDL_Color{ 150, 150, 150, 255 };
-        case TILE_SOLID: return SDL_Color{ 150, 150, 150, 255 };
-        case TILE_DEATH: return SDL_Color{ 255, 0, 0, 255 };
-        case TILE_SPAWNPOINT: return SDL_Color{ 0, 255, 0, 255 };
+        case TILE_INVALID:
+        default: return {};
+        case TILE_EMPTY: return CTileEmpty();
+        case TILE_SOLID: return CTileSolid();
+        case TILE_DEATH: return CTileDeath();
+        case TILE_SPAWNPOINT: return CTileSpawnpoint();
     }
 }
 
-CTile::CTile() {
-    m_Type = TileType::TILE_EMPTY;
-}
-
-CTileMap::CTileMap(CWindow* pWindow, int width, int height) {
+CTileMap::CTileMap(CWindow* pWindow, int width, int height, bool editor) {
     m_pWindow = pWindow;
     m_Width = width;
     m_Height = height;
+    m_Editor = editor;
 
     m_aTiles = new CTile[m_Width * m_Height];
+    for (int i = 0; i < m_Width * m_Height; i++)
+        m_aTiles[i] = ParseTile(TILE_EMPTY);
+
     m_pWindow->Input()->AddKey(SDL_SCANCODE_P);
 }
 
@@ -34,12 +36,12 @@ void CTileMap::Draw() {
         int x = i % m_Width;
         int y = i / m_Height;
         CTile* pTile = &m_aTiles[i];
-        TileType Type = pTile->GetType();
 
-        if (Type == TILE_EMPTY)
+        TileVisibility Visibility = pTile->Visibility();
+        if (Visibility == VISIBLE_NO || !m_Editor && Visibility == VISIBLE_EDITOR)
             continue;
 
-        SDL_Color Color = TileColor(Type);
+        SDL_Color Color = pTile->Color();
         pDrawing->SetColor(Color);
 
         SDL_Rect Rect;
@@ -70,6 +72,9 @@ void CTileMap::SaveMap(const char* filepath) {
     Mapfile.Close();
 }
 
+#include <iostream>
+using namespace std;
+
 void CTileMap::LoadMap(const char* filepath) {
     CReadFiles Mapfile(filepath);
     if (Mapfile.Error())
@@ -79,7 +84,8 @@ void CTileMap::LoadMap(const char* filepath) {
     m_Height = Mapfile.GetInt();
 
     for (int i = 0; i < m_Width * m_Height; i++)
-        m_aTiles[i].SetType((TileType)Mapfile.GetInt());
+        m_aTiles[i] = ParseTile((TileType) Mapfile.GetInt());
+
     Mapfile.Close();
 }
 
