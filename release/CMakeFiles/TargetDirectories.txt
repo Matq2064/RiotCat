@@ -1,0 +1,4 @@
+C:/Users/11dpmbozko/CLionProjects/RiotCat/cmake-build-release/CMakeFiles/RiotCat.dir
+C:/Users/11dpmbozko/CLionProjects/RiotCat/cmake-build-release/CMakeFiles/Editor.dir
+C:/Users/11dpmbozko/CLionProjects/RiotCat/cmake-build-release/CMakeFiles/edit_cache.dir
+C:/Users/11dpmbozko/CLionProjects/RiotCat/cmake-build-release/CMakeFiles/rebuild_cache.dir
