@@ -17,6 +17,9 @@ CDrawing::CDrawing(SDL_Renderer* pRenderer) {
 
     LoadSurface("assets/background.png", "background");
     TextureFromSurface("background", "background");
+
+    LoadSurface("assets/spagetti.png", "spagetti");
+    TextureFromSurface("spagetti", "spagetti");
 }
 
 CDrawing::~CDrawing() {

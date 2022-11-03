@@ -142,6 +142,14 @@ void CCharacter::TileCollision() {
             pTilemap->GetTileWorld(SideLeft, SideBottom)->GetType() == TileType::TILE_DEATH ||
             pTilemap->GetTileWorld(SideRight, SideBottom)->GetType() == TileType::TILE_DEATH;
 
+    bool Finish = pTilemap->GetTileWorld(SideLeft, SideTop)->GetType() == TileType::TILE_FINISH ||
+                  pTilemap->GetTileWorld(SideRight, SideTop)->GetType() == TileType::TILE_FINISH ||
+                  pTilemap->GetTileWorld(SideLeft, SideBottom)->GetType() == TileType::TILE_FINISH ||
+                  pTilemap->GetTileWorld(SideRight, SideBottom)->GetType() == TileType::TILE_FINISH;
+
+    if (Finish)
+        m_pGameworld->SetFinished(true);
+
     if (Deth) {
         m_pGameworld->TileMap()->FindTileWorld(TileType::TILE_SPAWNPOINT, &m_x, &m_y);
         m_lastx = m_x;
@@ -276,6 +284,9 @@ void CCharacter::TileCollision() {
 }
 
 void CCharacter::Tick() {
+    if(m_pGameworld->Finished())
+        return;
+
     CClock* pClock = m_pGameworld->Window()->Clock();
     double DeltaTime = pClock->TimeElapsed();
 
