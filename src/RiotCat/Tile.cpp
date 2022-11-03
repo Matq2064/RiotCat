@@ -1,6 +1,8 @@
 #include "Tile.h"
 #include "Files.h"
 
+SDL_Texture* m_aTileTextures[NUM_TILETEXTURES];
+
 CTile CTileMap::ParseTile(TileType type) {
     switch (type) {
         case TILE_INVALID:
@@ -9,6 +11,8 @@ CTile CTileMap::ParseTile(TileType type) {
         case TILE_SOLID: return CTileSolid();
         case TILE_DEATH: return CTileDeath();
         case TILE_SPAWNPOINT: return CTileSpawnpoint();
+        case TILE_FINISH: return CTileFinish();
+        case TILE_SOLID2: return CTileSolid2();
     }
 }
 
@@ -41,15 +45,21 @@ void CTileMap::Draw() {
         if (Visibility == VISIBLE_NO || !m_Editor && Visibility == VISIBLE_EDITOR)
             continue;
 
-        SDL_Color Color = pTile->Color();
-        pDrawing->SetColor(Color);
-
         SDL_Rect Rect;
         Rect.x = x * m_TileSize;
         Rect.y = y * m_TileSize;
         Rect.w = m_TileSize;
         Rect.h = m_TileSize;
-        pDrawing->FillRect(Rect, true);
+
+        TileTexture Texture = pTile->Texture();
+        if (Texture != TILETEXTURE_NONE) {
+            SDL_Texture* SDLTexture = m_aTileTextures[Texture];
+            pDrawing->RenderCopy(SDLTexture, nullptr, &Rect, true);
+        } else {
+            SDL_Color Color = pTile->Color();
+            pDrawing->SetColor(Color);
+            pDrawing->FillRect(Rect, true);
+        }
     }
 }
 
@@ -71,9 +81,6 @@ void CTileMap::SaveMap(const char* filepath) {
         Mapfile.AddInt((int)m_aTiles[i].GetType());
     Mapfile.Close();
 }
-
-#include <iostream>
-using namespace std;
 
 void CTileMap::LoadMap(const char* filepath) {
     CReadFiles Mapfile(filepath);

@@ -2,6 +2,24 @@
 #define RIOTCAT_TILE_H
 
 #include "Window.h"
+#include <vector>
+
+enum TileTexture {
+    TILETEXTURE_NONE = -1,
+    TILETEXTURE_TEST,
+    TILETEXTURE_TEST2,
+    TILETEXTURE_TEST3,
+    TILETEXTURE_THING,
+    NUM_TILETEXTURES
+};
+
+extern SDL_Texture* m_aTileTextures[NUM_TILETEXTURES];
+static void CollectTileTextures(CDrawing* pDrawing) {
+    m_aTileTextures[TILETEXTURE_TEST] = pDrawing->GetTexture("test");
+    m_aTileTextures[TILETEXTURE_TEST2] = pDrawing->GetTexture("test2");
+    m_aTileTextures[TILETEXTURE_TEST3] = pDrawing->GetTexture("test3");
+    m_aTileTextures[TILETEXTURE_THING] = pDrawing->GetTexture("thing");
+}
 
 enum TileVisibility {
     VISIBLE_NO,
@@ -16,6 +34,8 @@ enum TileType {
     TILE_SOLID = TILES_EDITOR,
     TILE_DEATH,
     TILE_SPAWNPOINT,
+    TILE_FINISH,
+    TILE_SOLID2,
     NUM_TILES
 };
 
@@ -25,6 +45,7 @@ protected:
     TileVisibility m_Visibility;
     bool m_Collides;
     SDL_Color m_Color;
+    TileTexture m_Texture;
 
 public:
     CTile() {
@@ -32,12 +53,14 @@ public:
         m_Visibility = TileVisibility::VISIBLE_YES;
         m_Collides = false;
         m_Color = { 255, 0, 255, 50 };
+        m_Texture = TILETEXTURE_NONE;
     }
 
     TileType GetType() const { return m_Type; }
     TileVisibility Visibility() const { return m_Visibility; }
     bool Collides() const { return m_Collides; }
     SDL_Color Color() const { return m_Color; }
+    TileTexture Texture() const { return m_Texture; }
     void SetType(TileType type) { m_Type = type; }
 };
 
@@ -48,7 +71,6 @@ public:
         m_Visibility = VISIBLE_NO;
         m_Collides = false;
     }
-
 };
 
 class CTileSolid : public CTile {
@@ -57,7 +79,7 @@ public:
         m_Type = TILE_SOLID;
         m_Visibility = VISIBLE_YES;
         m_Collides = true;
-        m_Color = { 150, 0, 150, 255 };
+        m_Texture = TILETEXTURE_TEST2;
     }
 };
 
@@ -67,7 +89,7 @@ public:
         m_Type = TILE_DEATH;
         m_Visibility = VISIBLE_YES;
         m_Collides = false;
-        m_Color = { 255, 0, 0, 255 };
+        m_Texture = TILETEXTURE_TEST3;
     }
 };
 
@@ -78,6 +100,26 @@ public:
         m_Visibility = VISIBLE_EDITOR;
         m_Collides = false;
         m_Color = { 0, 255, 0, 255 };
+    }
+};
+
+class CTileFinish : public CTile {
+public:
+    CTileFinish() {
+        m_Type = TILE_FINISH;
+        m_Visibility = VISIBLE_YES;
+        m_Collides = false;
+        m_Texture = TILETEXTURE_TEST;
+    }
+};
+
+class CTileSolid2 : public CTile {
+public:
+    CTileSolid2() {
+        m_Type = TILE_SOLID2;
+        m_Visibility = VISIBLE_YES;
+        m_Collides = true;
+        m_Texture = TILETEXTURE_THING;
     }
 };
 

@@ -20,6 +20,7 @@ int main() {
     CClock* pClock = pWindow->Clock();
     CInput* pInput = pWindow->Input();
     CDrawing* pDrawing = pWindow->Drawing();
+    CollectTileTextures(pDrawing);
     pCamera = new CCamera(0, 0, 900, 700, FOLLOW_INSTANT);
     pDrawing->SetCamera(pCamera);
     pGhost = new CGhost(pInput, 0, 0);

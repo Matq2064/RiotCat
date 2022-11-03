@@ -32,6 +32,7 @@ private:
     bool m_Jump;
     bool m_aControls[Controls::NUM_CONTROLS];
     bool m_aColliding[4];
+    SDL_Texture* m_pTexture;
 
     void Initialize(CGameWorld* pGameworld);
     void Controls();

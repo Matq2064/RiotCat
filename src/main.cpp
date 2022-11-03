@@ -24,6 +24,10 @@ int main() {
     CClock* pClock = pWindow->Clock();
     CInput* pInput = pWindow->Input();
     CDrawing* pDrawing = pWindow->Drawing();
+    SDL_Texture* pBackground = pDrawing->GetTexture("background");
+    int BackgroundWidth, BackgroundHeight;
+    SDL_QueryTexture(pBackground, nullptr, nullptr, &BackgroundWidth, &BackgroundHeight);
+    CollectTileTextures(pDrawing);
     pCamera = new CCamera(0, 0, 900, 700, FOLLOW_SLOW);
     pDrawing->SetCamera(pCamera);
 
@@ -43,8 +47,20 @@ int main() {
         pCharacter->Tick();
         pCamera->Tick();
 
-        pDrawing->SetColor(0, 0, 0, 255);
-        pDrawing->Clear();
+        // pDrawing->SetColor(0, 0, 0, 255);
+        // pDrawing->Clear();
+
+        // much spagetti its 2am hjelp
+        for (int x = (int)(pCamera->GetX() * 0.1) % BackgroundWidth; x < pCamera->GetW() + BackgroundWidth; x += BackgroundWidth) {
+            for (int y = (int)(pCamera->GetY() * 0.1) % BackgroundHeight; y < pCamera->GetH() + BackgroundHeight; y += BackgroundHeight) {
+                SDL_Rect Destination;
+                Destination.x = (int)((double)pCamera->GetW() - x);
+                Destination.y = (int)((double)pCamera->GetH() - y);
+                Destination.w = BackgroundWidth;
+                Destination.h = BackgroundHeight;
+                pDrawing->RenderCopy(pBackground, nullptr, &Destination, false);
+            }
+        }
 
         pGameworld->Draw();
         pCharacter->Draw();

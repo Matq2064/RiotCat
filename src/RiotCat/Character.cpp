@@ -1,13 +1,13 @@
 #include "Character.h"
 
 CCharacter::CCharacter(CGameWorld* pGameworld)
-        : CHandleRect(0, 0, 32.0, 32.0) {
+        : CHandleRect(0, 0, 50.0, 50.0) {
     pGameworld->SpawnCoordinates(&m_x, &m_y);
     Initialize(pGameworld);
 }
 
 CCharacter::CCharacter(CGameWorld* pGameworld, double x, double y)
-        : CHandleRect(x, y, 32.0, 32.0) {
+        : CHandleRect(x, y, 50.0, 50.0) {
     Initialize(pGameworld);
 }
 
@@ -22,6 +22,7 @@ void CCharacter::Initialize(CGameWorld* pGameworld) {
     m_xvel = 0.0;
     m_yvel = 0.0;
     m_Jump = false;
+    m_pTexture = m_pGameworld->Window()->Drawing()->GetTexture("butter");
 
     for (int i = 0; i < sizeof(m_aControls); i++)
         m_aControls[i] = false;
@@ -176,8 +177,7 @@ void CCharacter::TileCollision() {
         for (int i = 1; i <= WallLoops; i++) {
             double CurrentX = SideLeft + pTilemap->TileSize() * i;
 
-            TileType Type = pTilemap->GetTileWorld(CurrentX, SideTop)->GetType();
-            if (Type == TileType::TILE_SOLID) Walls++;
+            if (pTilemap->GetTileWorld(CurrentX, SideTop)->Collides()) Walls++;
         }
         WallTop = (bool) Walls;
     }
@@ -188,8 +188,7 @@ void CCharacter::TileCollision() {
         for (int i = 1; i <= WallLoops; i++) {
             double CurrentY = SideTop + pTilemap->TileSize() * i;
 
-            TileType Type = pTilemap->GetTileWorld(SideRight, CurrentY)->GetType();
-            if (Type == TileType::TILE_SOLID) Walls++;
+            if (pTilemap->GetTileWorld(SideRight, CurrentY)->Collides()) Walls++;
         }
         WallRight = (bool) Walls;
     }
@@ -200,8 +199,7 @@ void CCharacter::TileCollision() {
         for (int i = 1; i <= WallLoops; i++) {
             double CurrentX = SideLeft + pTilemap->TileSize() * i;
 
-            TileType Type = pTilemap->GetTileWorld(CurrentX, SideBottom)->GetType();
-            if (Type == TileType::TILE_SOLID) Walls++;
+            if (pTilemap->GetTileWorld(CurrentX, SideBottom)->Collides()) Walls++;
         }
         WallBottom = (bool) Walls;
     }
@@ -212,8 +210,7 @@ void CCharacter::TileCollision() {
         for (int i = 1; i <= WallLoops; i++) {
             double CurrentY = SideTop + pTilemap->TileSize() * i;
 
-            TileType Type = pTilemap->GetTileWorld(SideLeft, CurrentY)->GetType();
-            if (Type == TileType::TILE_SOLID) Walls++;
+            if (pTilemap->GetTileWorld(SideLeft, CurrentY)->Collides()) Walls++;
         }
         WallLeft = (bool) Walls;
     }
@@ -317,6 +314,7 @@ void CCharacter::Draw() {
     CDrawing* pDrawing = m_pGameworld->Window()->Drawing();
 
     SDL_Rect Rect = GetRect();
-    pDrawing->SetColor(255, 255, 0, 255);
-    pDrawing->FillRect(GetRect(), true);
+    pDrawing->RenderCopy(m_pTexture, nullptr, &Rect, true);
+    // pDrawing->SetColor(255, 255, 0, 255);
+    // pDrawing->FillRect(GetRect(), true);
 }
